@@ -1,2 +1,2 @@
-# sizeoftank_hexo_src
-sizeoftank_hexo_src
+# sizeoftank.github.io
+sizeoftank.github.io
