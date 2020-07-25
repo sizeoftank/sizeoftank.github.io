@@ -1,0 +1,26 @@
+---
+date: 2018-04-15 22:00:00
+title: Homebrew更换git源
+---
+
+```
+替换brew.git:
+cd "$(brew --repo)"
+git remote set-url origin https://mirrors.ustc.edu.cn/brew.git
+
+替换homebrew-core.git:
+cd "$(brew --repo)/Library/Taps/homebrew/homebrew-core"
+git remote set-url origin https://mirrors.ustc.edu.cn/homebrew-core.git
+```
+
+```
+重置brew.git:
+cd "$(brew --repo)"
+git remote set-url origin https://github.com/Homebrew/brew.git
+
+重置homebrew-core.git:
+cd "$(brew --repo)/Library/Taps/homebrew/homebrew-core"
+git remote set-url origin https://github.com/Homebrew/homebrew-core.git
+```
+
+真TM难用
