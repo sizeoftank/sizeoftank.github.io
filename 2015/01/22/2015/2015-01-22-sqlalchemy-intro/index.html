@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="什么是SQLAlchemy通俗的说法就是一个ORM框架 详细一点，就是它实现了一个从Python代码中的类与SQL数据库表结构之间的映射，也包括了对象和SQL数据库行内容的一个映射关系 通过在代码里直接操作这些对象，也比编写SQL去执行友好多了 安装的话直接使用pip安装就好了 pip install sqlalchemy 下面直接通过一个例子介绍如何使用它来操作数据库 连接数据库123from">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SQLAlchemy入门">
+<meta property="og:url" content="http://sizeoftank.github.io/2015/01/22/2015/2015-01-22-sqlalchemy-intro/index.html">
+<meta property="og:site_name" content="sizeoftank">
+<meta property="og:description" content="什么是SQLAlchemy通俗的说法就是一个ORM框架 详细一点，就是它实现了一个从Python代码中的类与SQL数据库表结构之间的映射，也包括了对象和SQL数据库行内容的一个映射关系 通过在代码里直接操作这些对象，也比编写SQL去执行友好多了 安装的话直接使用pip安装就好了 pip install sqlalchemy 下面直接通过一个例子介绍如何使用它来操作数据库 连接数据库123from">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2020-10-21T09:04:45.821Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="SQLAlchemy入门">
+<meta name="twitter:description" content="什么是SQLAlchemy通俗的说法就是一个ORM框架 详细一点，就是它实现了一个从Python代码中的类与SQL数据库表结构之间的映射，也包括了对象和SQL数据库行内容的一个映射关系 通过在代码里直接操作这些对象，也比编写SQL去执行友好多了 安装的话直接使用pip安装就好了 pip install sqlalchemy 下面直接通过一个例子介绍如何使用它来操作数据库 连接数据库123from">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://sizeoftank.github.io/2015/01/22/2015/2015-01-22-sqlalchemy-intro/">
+
+
+
+
+
+  <title>SQLAlchemy入门 | sizeoftank</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">sizeoftank</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://sizeoftank.github.io/2015/01/22/2015/2015-01-22-sqlalchemy-intro/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="sizeoftank">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="sizeoftank">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">SQLAlchemy入门</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2015-01-22T10:20:00+00:00">
+                2015-01-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/Python/" itemprop="url" rel="index">
+                    <span itemprop="name">Python</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2015/01/22/2015/2015-01-22-sqlalchemy-intro/" class="leancloud_visitors" data-flag-title="SQLAlchemy入门">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="什么是SQLAlchemy"><a href="#什么是SQLAlchemy" class="headerlink" title="什么是SQLAlchemy"></a>什么是SQLAlchemy</h2><p>通俗的说法就是一个ORM框架</p>
+<p>详细一点，就是它实现了一个从Python代码中的类与SQL数据库表结构之间的映射，也包括了对象和SQL数据库行内容的一个映射关系</p>
+<p>通过在代码里直接操作这些对象，也比编写SQL去执行友好多了</p>
+<p>安装的话直接使用pip安装就好了 pip install sqlalchemy</p>
+<p>下面直接通过一个例子介绍如何使用它来操作数据库</p>
+<h2 id="连接数据库"><a href="#连接数据库" class="headerlink" title="连接数据库"></a>连接数据库</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sqlalchemy <span class="keyword">import</span> create_engine</span><br><span class="line"></span><br><span class="line">engine = create_engine(<span class="string">'mysql+mysqldb://username:password@localhost:3306/test?charset=utf8'</span>, echo=<span class="keyword">True</span>)</span><br></pre></td></tr></table></figure>
+<p>这边是一个连接本地MySQL数据库的例子(参考形式： mysql+mysqldb://用户名:密码@IP地址:端口号/数据库名)</p>
+<h2 id="建立数据对象"><a href="#建立数据对象" class="headerlink" title="建立数据对象"></a>建立数据对象</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sqlalchemy.ext.declarative <span class="keyword">import</span> declarative_base</span><br><span class="line"><span class="keyword">from</span> sqlalchemy <span class="keyword">import</span> Column, Integer, String</span><br><span class="line"></span><br><span class="line">Base = declarative_base()</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">User</span><span class="params">(Base)</span>:</span></span><br><span class="line">    __tablename__ = <span class="string">'users'</span></span><br><span class="line">    id = Column(Integer, primary_key=<span class="keyword">True</span>)</span><br><span class="line">    name = Column(String(<span class="number">128</span>))</span><br><span class="line">    fullname = Column(String(<span class="number">128</span>))</span><br><span class="line">    password = Column(String(<span class="number">128</span>))</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__repr__</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> <span class="string">"&lt;User(name='%s', fullname='%s', password='%s')&gt;"</span> %(</span><br><span class="line">            self.name, self.fullname, self.password)</span><br></pre></td></tr></table></figure>
+<p>在SQLAlchemy中使用对象映射是通过继承Base这个类来实现的，Base这个类通过调用declarative_base()来创建</p>
+<p>在这个例子中表结构:  id(主键), name, fullname, password</p>
+<p>在User类里创建相应的这几个属性，各个属性的值用Column来创建，参数描述了SQL数据库中的数据类型（比如Integer, String, 还有primary_key, autoincrement, unique等等)</p>
+<p>__tablename__ 对应于SQL数据库的表名称</p>
+<p>实现repr()方法，便于调试程序时清楚的看到结果</p>
+<p>通过定义了User类之后，后续就可以对数据库进行操作了(包括创建表这一过程)</p>
+<h2 id="创建表"><a href="#创建表" class="headerlink" title="创建表"></a>创建表</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Base.metadata.create_all(engine)</span><br></pre></td></tr></table></figure>
+<p>通过上面的语句可以创建表，打开数据库就可以查看到与User类对应的表就已经被创建好了</p>
+<p>如果定义了多个类，也会根据这些创建多个表</p>
+<p>根据这个思路，在具体的项目中就可以直接编写好代码然后生成表了，相比与操作数据库，自己在代码里实现相应的数据对象还是非常方便的</p>
+<h2 id="创建会话"><a href="#创建会话" class="headerlink" title="创建会话"></a>创建会话</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">SessionMK = sessionmaker(bind=engine)</span><br><span class="line">session = SessionMK()</span><br></pre></td></tr></table></figure>
+<p>sessionmaker这个函数将根据传入的engine创建一个会话的生成器(返回的是一个类)</p>
+<p>具体的会话根据上面的会话生成器来创建实例化的会话对象</p>
+<p>(这边用到的是抽象工厂模式吧?)</p>
+<h2 id="操作数据库"><a href="#操作数据库" class="headerlink" title="操作数据库"></a>操作数据库</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">session</span><span class="params">()</span>:</span></span><br><span class="line">    SessionMK = sessionmaker(bind=engine)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Add new objects</span></span><br><span class="line">    session = SessionMK()</span><br><span class="line">    hello = User(name=<span class="string">'hello'</span>, fullname=<span class="string">'hello world'</span>, password=<span class="string">'123'</span>)</span><br><span class="line">    session.add(hello)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Query ...</span></span><br><span class="line">    users = session.query(User).filter_by(name=<span class="string">'hello'</span>)</span><br><span class="line">    <span class="keyword">for</span> user <span class="keyword">in</span> users:</span><br><span class="line">        <span class="keyword">print</span> user</span><br><span class="line">        user.password = <span class="string">'xxx'</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># Dirty ..</span></span><br><span class="line">    <span class="keyword">print</span> session.dirty</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Commit</span></span><br><span class="line">    session.commit()</span><br></pre></td></tr></table></figure>
+<p>这边做的几件事情:</p>
+<ol>
+<li>新建一个hello条目插入表中</li>
+<li>新建一条查询，并修改hello的密码</li>
+<li>查看脏数据(可以看到被修改了哪些东西)</li>
+<li>执行commit提交修改</li>
+</ol>
+<h2 id="回滚"><a href="#回滚" class="headerlink" title="回滚"></a>回滚</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">rollback</span><span class="params">()</span>:</span></span><br><span class="line">    session = SessionMK()</span><br><span class="line"></span><br><span class="line">    user = session.query(User).filter_by(name=<span class="string">'hello'</span>).first()</span><br><span class="line">    user.name = <span class="string">'test'</span></span><br><span class="line"></span><br><span class="line">    another = User(name=<span class="string">'another'</span>, fullname=<span class="string">'xxx'</span>, password=<span class="string">'456'</span>)</span><br><span class="line">    session.add(another)</span><br><span class="line"></span><br><span class="line">    users = session.query(User).filter(User.name.in_([<span class="string">'test'</span>, <span class="string">'another'</span>]))</span><br><span class="line">    <span class="keyword">for</span> user <span class="keyword">in</span> users:</span><br><span class="line">        <span class="keyword">print</span> user</span><br><span class="line"></span><br><span class="line">    session.rollback()</span><br><span class="line">    <span class="keyword">print</span> <span class="string">' --- rollback --- '</span></span><br><span class="line"></span><br><span class="line">    users = session.query(User).filter(User.name.in_([<span class="string">'hello'</span>, <span class="string">'test'</span>, <span class="string">'another'</span>]))</span><br><span class="line">    <span class="keyword">for</span> user <span class="keyword">in</span> users:</span><br><span class="line">        <span class="keyword">print</span> user</span><br></pre></td></tr></table></figure>
+<p>如果变更了一些东西后需要恢复到修改前，就需要执行回滚了(比如会用在错误处理上面)</p>
+<p>上面的代码做了几件事情，首先修改hello的名字为test, 然后新加入一个叫another的用户，这时候创建查询找到这两个用户；之后进行回滚，之后用hello,test,another这三个名字去查询，这时候的结果就是名为hello的用户(数据库回滚到原来的状态)</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2015/01/14/2015/2015-01-14-flask-unittest/" rel="next" title="在Flask中进行单元测试小记">
+                <i class="fa fa-chevron-left"></i> 在Flask中进行单元测试小记
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2015/01/31/2015/2015-01-31-python-introspection/" rel="prev" title="Python中的自省和反射">
+                Python中的自省和反射 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">sizeoftank</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">63</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">标签</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/sizeoftank" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://weibo.com/lovefar/" target="_blank" title="Weibo">
+                      
+                        <i class="fa fa-fw fa-globe"></i>Weibo</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是SQLAlchemy"><span class="nav-number">1.</span> <span class="nav-text">什么是SQLAlchemy</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#连接数据库"><span class="nav-number">2.</span> <span class="nav-text">连接数据库</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#建立数据对象"><span class="nav-number">3.</span> <span class="nav-text">建立数据对象</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#创建表"><span class="nav-number">4.</span> <span class="nav-text">创建表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#创建会话"><span class="nav-number">5.</span> <span class="nav-text">创建会话</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#操作数据库"><span class="nav-number">6.</span> <span class="nav-text">操作数据库</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#回滚"><span class="nav-number">7.</span> <span class="nav-text">回滚</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">sizeoftank</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("wOugPOeilzpCKhYCUAYbJPIj-gzGzoHsz", "OCMQmGoPt56vLJ84X0zapKpq");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
