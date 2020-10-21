@@ -30,3 +30,11 @@ gcc --version
 sudo yum install epel-release
 sudo yum install cmake3
 ```
+
+
+先替换 bash 中的 gcc 版本再执行 pip install
+```
+scl enable devtoolset-7 bash
+source .../venv/bin/activate
+pip install xgboost
+```
