@@ -1,6 +1,8 @@
 ---
 date: 2020-07-25 22:00:00
 title: Homebrew更换git源
+categories:
+- 个人笔记
 ---
 
 ##### 替换USTC源

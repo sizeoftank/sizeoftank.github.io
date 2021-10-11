@@ -3,7 +3,7 @@ date: 2015-04-03 00:30:00
 layout: post
 title: Redis学习笔记
 categories:
-- Redis
+- 个人笔记
 ---
 现在NoSQL也是特别热门的技术关键词了，近来整理了一些Redis的东西
 

@@ -1,6 +1,8 @@
 ---
 date: 2018-04-15 22:00:00
 title: 写给运维的Python使用技巧
+categories:
+- Python
 ---
 
 #### 前言

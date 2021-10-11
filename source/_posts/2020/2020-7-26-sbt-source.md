@@ -2,7 +2,7 @@
 date: 2020-07-25 22:00:00
 title: SBT设置国内源
 categories:
-- Scala
+- 个人笔记
 ---
 
 ```

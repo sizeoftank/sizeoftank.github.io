@@ -1,6 +1,8 @@
 ---
 date: 2020-10-21 22:00:00
 title: CentOS中XGBoost安装失败问题
+categories:
+- 个人笔记
 ---
 
 执行安装命令后报出各种编译错误
