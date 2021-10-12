@@ -81,3 +81,11 @@ deploy:
   type: git
   repo: https://github.com/sizeoftank/sizeoftank.github.io
   branch: master
+
+# mermaid chart
+mermaid: ## mermaid url https://github.com/knsv/mermaid
+  enable: true  # default true
+  version: "8.13.2" # default v7.1.2
+  options:  # find more api options from https://github.com/knsv/mermaid/blob/master/src/mermaidAPI.js
+    #startOnload: true  // default true
+    theme: forest
