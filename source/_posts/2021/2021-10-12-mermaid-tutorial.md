@@ -1,6 +1,6 @@
 ---
 date: 2021-10-12 21:00:00
-title: 画图工具Mermaid教程
+title: 介绍一个画图工具Mermaid
 categories:
 - 个人笔记
 ---
