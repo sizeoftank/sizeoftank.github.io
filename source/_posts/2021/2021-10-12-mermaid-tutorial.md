@@ -80,6 +80,18 @@ pie
   "Go" : 5
 ```
 
+#### 画个甘特图
+```mermaid
+gantt
+section Section
+UI设计: des0, 2021-11-01, 1d
+概要设计 : des1, 2021-11-01, 1d
+后端开发 : des3, after des1, 1d
+前端开发 :  des4, after des1, 2d
+接口联调 :  des5, after des4, 1d
+集成测试 :  des6, after des5, 2d
+```
+
 ### 工具集成
 
 #### 与Hexo集成
