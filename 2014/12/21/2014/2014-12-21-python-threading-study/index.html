@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="主要介绍Python使用threading模块进行多线程编程的例子，以及一个简单的线程池的实现思路。 具体可以参考该模块的官方文档 ##线程的创建和使用、锁、条件变量## 线程创建 Python的threading模块提供了两种创建线程的方法 方法一是直接使用threading.Thread()来创建，在这种创建方式中，创建Thread()对象时需要指定该线程准备执行的函数，然后用*args与**">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python多线程编程学习之基础篇">
+<meta property="og:url" content="http://sizeoftank.github.io/2014/12/21/2014/2014-12-21-python-threading-study/index.html">
+<meta property="og:site_name" content="sizeoftank">
+<meta property="og:description" content="主要介绍Python使用threading模块进行多线程编程的例子，以及一个简单的线程池的实现思路。 具体可以参考该模块的官方文档 ##线程的创建和使用、锁、条件变量## 线程创建 Python的threading模块提供了两种创建线程的方法 方法一是直接使用threading.Thread()来创建，在这种创建方式中，创建Thread()对象时需要指定该线程准备执行的函数，然后用*args与**">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2021-10-30T08:06:46.897Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Python多线程编程学习之基础篇">
+<meta name="twitter:description" content="主要介绍Python使用threading模块进行多线程编程的例子，以及一个简单的线程池的实现思路。 具体可以参考该模块的官方文档 ##线程的创建和使用、锁、条件变量## 线程创建 Python的threading模块提供了两种创建线程的方法 方法一是直接使用threading.Thread()来创建，在这种创建方式中，创建Thread()对象时需要指定该线程准备执行的函数，然后用*args与**">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://sizeoftank.github.io/2014/12/21/2014/2014-12-21-python-threading-study/">
+
+
+
+
+
+  <title>Python多线程编程学习之基础篇 | sizeoftank</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">sizeoftank</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://sizeoftank.github.io/2014/12/21/2014/2014-12-21-python-threading-study/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="sizeoftank">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="sizeoftank">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Python多线程编程学习之基础篇</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2014-12-21T03:20:00+00:00">
+                2014-12-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Python/" itemprop="url" rel="index">
+                    <span itemprop="name">Python</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2014/12/21/2014/2014-12-21-python-threading-study/" class="leancloud_visitors" data-flag-title="Python多线程编程学习之基础篇">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>主要介绍Python使用threading模块进行多线程编程的例子，以及一个简单的线程池的实现思路。</p>
+<p>具体可以参考该模块的<a href="https://docs.python.org/2/library/threading.html#threading.Condition" target="_blank" rel="noopener">官方文档</a></p>
+<p>##线程的创建和使用、锁、条件变量##</p>
+<p><strong>线程创建</strong></p>
+<p>Python的threading模块提供了两种创建线程的方法</p>
+<p>方法一是直接使用threading.Thread()来创建，在这种创建方式中，创建Thread()对象时需要指定该线程准备执行的函数，然后用<br>*args与**kwargs来传递参数，其中*args传递一个tuple类型的参数，**kwargs传递字典类型的参数表<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">thread_print_args</span><span class="params">(*args, **kwargs)</span>:</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>, <span class="number">10</span>):</span><br><span class="line">        <span class="keyword">print</span> args, kwargs</span><br><span class="line">        time.sleep(<span class="number">0.1</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">thread_create_test</span><span class="params">()</span>:</span></span><br><span class="line">    threading.Thread(<span class="keyword">None</span>, thread_print_args, args = (<span class="string">'a1'</span>,<span class="string">'a2'</span>), kwargs = &#123;<span class="string">'name'</span>: <span class="string">'test'</span>&#125;).start()</span><br><span class="line">    threading.Thread(<span class="keyword">None</span>, thread_print_args, args = (<span class="string">'b1'</span>,<span class="string">'b2'</span>), kwargs = &#123;<span class="string">'name'</span>: <span class="string">'hello'</span>&#125;).start()</span><br></pre></td></tr></table></figure></p>
+<p>方法二是通过自定义线程类继承threading.Thread类来创建，需要重载run()方法，在run()方法中设置线程要跑的函数就行了<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ThreadPrint</span><span class="params">(threading.Thread)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">run</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>, <span class="number">10</span>):</span><br><span class="line">            <span class="keyword">print</span> self.name</span><br><span class="line">            time.sleep(<span class="number">0.1</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">thread_create_test</span><span class="params">()</span>:</span></span><br><span class="line">    ThreadPrint().start()</span><br><span class="line">    ThreadPrint().start()</span><br></pre></td></tr></table></figure></p>
+<p>可以参看threading.py文件中的源码，其实run()方法就是线程调度运行时要执行的函数，默认的Thread类里也是<br>通过self.__target来调用相应的函数，只是在构造对象时创建了这个属性</p>
+<p>另外，不论使用哪种方式创建了线程，线程在run()方法执行完毕之后自动退出</p>
+<p><strong>使用互斥锁</strong></p>
+<p>互斥锁的用途是用于控制线程间共有资源的访问，实现原子操作，也不多介绍了</p>
+<p>在Python中互斥锁被封装在threading.Lock这个类中，具有请求和释放两个方法</p>
+<p>这边的例子是创建2个线程使用互斥锁对全局的count进行累加的操作，两个线程有不同的访问间隔:<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">mutex = threading.Lock()</span><br><span class="line">count = <span class="number">0</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ThreadLockTest</span><span class="params">(threading.Thread)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, interval)</span>:</span></span><br><span class="line">        threading.Thread.__init__(self)</span><br><span class="line">        self.interval = interval</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">run</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">global</span> count</span><br><span class="line">        <span class="keyword">while</span> count &lt; <span class="number">100</span>:</span><br><span class="line">            <span class="keyword">print</span> <span class="string">"%s acquires..."</span> % (self.name)</span><br><span class="line">            mutex.acquire()</span><br><span class="line">            <span class="keyword">print</span> <span class="string">"%s enter..."</span> % (self.name)</span><br><span class="line">            count = count + <span class="number">1</span></span><br><span class="line">            <span class="keyword">print</span> <span class="string">'%s : %d'</span> %(self.name, count)</span><br><span class="line">            time.sleep(self.interval)</span><br><span class="line">            mutex.release()</span><br><span class="line">            <span class="keyword">print</span> <span class="string">"%s exit..."</span> % (self.name)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">thread_lock_test</span><span class="params">()</span>:</span></span><br><span class="line">    ThreadLockTest(<span class="number">0.1</span>).start()</span><br><span class="line">    ThreadLockTest(<span class="number">0.3</span>).start()</span><br></pre></td></tr></table></figure></p>
+<p>该例子也只是简要地说明锁的使用方式，在实际的多线程编程中使用锁时，还得注意死锁的避免，一个简单的原则就是：保证线程都按相同的次序来持有锁变量</p>
+<p><strong>使用条件变量</strong></p>
+<p>条件变量是用于线程的同步的，简单地说就是去操作线程’挂起等待-唤醒’这一过程</p>
+<p>Python中条件变量封装在threading.Condition这个类中，wait()方法用于阻塞等待，notify()方法用于唤醒，需要注意到的是对于条件变量的访问是原子的，因而条件变量也含有了acquire(),release()这两个方法，在使用wait()，notify()之前就需要先请求锁</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">condition = threading.Condition()</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ThreadCondTest</span><span class="params">(threading.Thread)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">run</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">print</span> <span class="string">"%s runs.."</span> %(self.name)</span><br><span class="line">        condition.acquire()</span><br><span class="line">        <span class="keyword">print</span> <span class="string">"%s wait.."</span> %(self.name)</span><br><span class="line">        condition.wait()</span><br><span class="line">        condition.release()</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>, <span class="number">5</span>):</span><br><span class="line">            <span class="keyword">print</span> <span class="string">"Hi, I'm runs now"</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">thread_cond_test</span><span class="params">()</span>:</span></span><br><span class="line">    ThreadCondTest().start()</span><br><span class="line">    time.sleep(<span class="number">3</span>)</span><br><span class="line">    condition.acquire()</span><br><span class="line">    condition.notify()</span><br><span class="line">    condition.release()</span><br></pre></td></tr></table></figure>
+<p>在这个例子中，线程创建启动后马上将自己阻塞等待，直到主程序time.sleep(3)之后将其唤醒后继续执行后面的代码</p>
+<p>##一个简单线程池的实现思路##</p>
+<p>实际的多线程编程中，为了避免大量的创建和销毁线程，就需要建立一个线程池来辅助管理和回收利用这些线程来达到程序优化的目的；然而在Python中，相比与Linux下用C/C++来实现一个线程池的话，编程的复杂度就简单得多了；通常一个完整的线程池由线程池需要有线程队列和工作队列两个部分组成，这边简要介绍一个线程队列的实现思路作抛砖引玉用，当然如果要设计成通用的模块和API的话还是有大量的工作要做的</p>
+<p>Python中的Queue模块已经提供了一个多线程环境下的队列应用(内部用互斥锁已经实现了原子访问)，可以直接拿起来用，就不必考虑设计队列时的互斥和同步问题了</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line">MAX_THREADS = <span class="number">4</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TestThread</span><span class="params">(threading.Thread)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, poll, cond, num)</span>:</span></span><br><span class="line">        threading.Thread.__init__(self)</span><br><span class="line">        self.poll = poll</span><br><span class="line">        self.task = <span class="keyword">None</span></span><br><span class="line">        self.task_args = <span class="keyword">None</span></span><br><span class="line">        self.cond = cond</span><br><span class="line">        self.threadID = num</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">run</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">while</span> <span class="keyword">True</span>:</span><br><span class="line">            <span class="keyword">print</span> <span class="string">'Thread: %s wait now...'</span>%(self.getName())</span><br><span class="line">            self.cond.acquire()</span><br><span class="line">            self.poll.threads.put(self)</span><br><span class="line">            self.cond.wait()</span><br><span class="line">            self.cond.release()</span><br><span class="line">            <span class="keyword">print</span> <span class="string">'Thread: %s run now...'</span>%(self.getName())</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> self.task != <span class="keyword">None</span>:</span><br><span class="line">                <span class="keyword">print</span> <span class="string">'Call Function : %s(%s)'</span> %(self.task, self.task_args)</span><br><span class="line">                self.task(self.task_args)</span><br><span class="line">                <span class="keyword">del</span> self.task, self.task_args</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ThreadPoll</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, n)</span>:</span></span><br><span class="line">        self.threads = Queue.Queue(n)</span><br><span class="line">        self.maxsize = n</span><br><span class="line">        self.__init__threads()</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__threads</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>, self.maxsize):</span><br><span class="line">            thr = TestThread(poll = self, cond = threading.Condition(), num = i)</span><br><span class="line">            thr.start()</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">dispatch</span><span class="params">(self, func, arg)</span>:</span></span><br><span class="line">        thr = self.threads.get()</span><br><span class="line">        thr.task = func</span><br><span class="line">        thr.task_args = arg</span><br><span class="line">        thr.cond.acquire()</span><br><span class="line">        thr.cond.notify()</span><br><span class="line">        thr.cond.release()</span><br><span class="line">        <span class="keyword">return</span> thr.threadID</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">thread_print</span><span class="params">(s)</span>:</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>, <span class="number">10</span>):</span><br><span class="line">        <span class="keyword">print</span> <span class="string">'Thread: %s'</span> % (s)</span><br><span class="line">        time.sleep(<span class="number">0.1</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">thread_poll_test</span><span class="params">()</span>:</span></span><br><span class="line">    threadpoll = ThreadPoll(MAX_THREADS)</span><br><span class="line">    threadpoll.dispatch(thread_print, <span class="string">'Test-1'</span>)</span><br><span class="line">    threadpoll.dispatch(thread_print, <span class="string">'Test-2'</span>)</span><br><span class="line">    threadpoll.dispatch(thread_print, <span class="string">'Test-3'</span>)</span><br><span class="line">    threadpoll.dispatch(thread_print, <span class="string">'Test-4'</span>)</span><br><span class="line"></span><br><span class="line">    threadpoll.dispatch(thread_print, <span class="string">'Test-1'</span>)</span><br><span class="line">    threadpoll.dispatch(thread_print, <span class="string">'Test-2'</span>)</span><br><span class="line">    threadpoll.dispatch(thread_print, <span class="string">'Test-3'</span>)</span><br><span class="line">    threadpoll.dispatch(thread_print, <span class="string">'Test-4'</span>)</span><br></pre></td></tr></table></figure>
+<p>TestThread类是线程池使用的线程类，其中task属性用于设置线程将要完成的任务，默认为空，使用时通过线程池的dispatch()来自动分派，<br>run()函数里是一个无穷循环，初始化时首先将自己阻塞挂起，之后放回到线程池中，统一由线程池进行管理。</p>
+<p>ThreadPoll类是线程池的管理器，提供dispatch()来分派将要进行的任务给正在等待的线程，初始化时先创建N个线程，它们都统一阻塞自己放回到线程池中，如果有一个新的任务要做时，就通过dispatch()去分派，先是从队列中取出一个线程，给他重新设置task属性和参数，之后将其唤醒，那么该线程就会去执行这个工作，待它执行完之后又回到主循环，将自己放回线程池和进入等待状态。</p>
+<p>进一步的工作还需要考虑工作队列模块，例如当一个新的task来的时候，如果线程池中没有空闲的线程池，那么就得先将该任务放进工作队列缓冲区中，而线程池中一旦有空闲线程，就得从工作队列中拉出一个task来处理</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2014/08/24/2014/2014-08-24-python-source-object/" rel="next" title="Python源码分析：对象">
+                <i class="fa fa-chevron-left"></i> Python源码分析：对象
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2015/01/31/2015/2015-01-31-python-introspection/" rel="prev" title="Python中的自省和反射">
+                Python中的自省和反射 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">sizeoftank</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">54</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/sizeoftank" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://weibo.com/lovefar/" target="_blank" title="Weibo">
+                      
+                        <i class="fa fa-fw fa-globe"></i>Weibo</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">sizeoftank</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+
+  <script src="https://unpkg.com/mermaid@8.13.2/dist/mermaid.min.js"></script>
+  <script>
+    if (window.mermaid) {
+      mermaid.initialize({"theme":"forest"});
+    }
+  </script>
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("tclzHvBInNDh45LdDgB99dS3-gzGzoHsz", "egATB3l5I1ctiULajrBzgABl");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

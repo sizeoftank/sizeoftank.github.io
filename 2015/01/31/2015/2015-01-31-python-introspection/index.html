@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="WHAT按照本人的理解，自省和反射机制是一个相似的概念，就拿反射来说，可能我在编程中遇到了这么一种情况：我(操作者)不知道需要操作的对象的数据结构和方法是怎么样的，但是我可以通过字符串的形式来令某个对象去调用某个方法，这就是一个简单的反射例子。 那么自省呢，我认为它是编程语言中的一个对象，它事先可以告诉我(或者说我可以通过某个方法了解到)它的结构是怎么样的，有哪些操作方法，然后我再去调用它，这就对">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python中的自省和反射">
+<meta property="og:url" content="http://sizeoftank.github.io/2015/01/31/2015/2015-01-31-python-introspection/index.html">
+<meta property="og:site_name" content="sizeoftank">
+<meta property="og:description" content="WHAT按照本人的理解，自省和反射机制是一个相似的概念，就拿反射来说，可能我在编程中遇到了这么一种情况：我(操作者)不知道需要操作的对象的数据结构和方法是怎么样的，但是我可以通过字符串的形式来令某个对象去调用某个方法，这就是一个简单的反射例子。 那么自省呢，我认为它是编程语言中的一个对象，它事先可以告诉我(或者说我可以通过某个方法了解到)它的结构是怎么样的，有哪些操作方法，然后我再去调用它，这就对">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2021-10-30T08:06:46.897Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Python中的自省和反射">
+<meta name="twitter:description" content="WHAT按照本人的理解，自省和反射机制是一个相似的概念，就拿反射来说，可能我在编程中遇到了这么一种情况：我(操作者)不知道需要操作的对象的数据结构和方法是怎么样的，但是我可以通过字符串的形式来令某个对象去调用某个方法，这就是一个简单的反射例子。 那么自省呢，我认为它是编程语言中的一个对象，它事先可以告诉我(或者说我可以通过某个方法了解到)它的结构是怎么样的，有哪些操作方法，然后我再去调用它，这就对">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://sizeoftank.github.io/2015/01/31/2015/2015-01-31-python-introspection/">
+
+
+
+
+
+  <title>Python中的自省和反射 | sizeoftank</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">sizeoftank</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://sizeoftank.github.io/2015/01/31/2015/2015-01-31-python-introspection/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="sizeoftank">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="sizeoftank">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Python中的自省和反射</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2015-01-31T00:20:00+00:00">
+                2015-01-31
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Python/" itemprop="url" rel="index">
+                    <span itemprop="name">Python</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2015/01/31/2015/2015-01-31-python-introspection/" class="leancloud_visitors" data-flag-title="Python中的自省和反射">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="WHAT"><a href="#WHAT" class="headerlink" title="WHAT"></a>WHAT</h2><p>按照本人的理解，自省和反射机制是一个相似的概念，就拿反射来说，可能我在编程中遇到了这么一种情况：我(操作者)不知道需要操作的对象的数据结构和方法是怎么样的，但是我可以通过字符串的形式来令某个对象去调用某个方法，这就是一个简单的反射例子。 那么自省呢，我认为它是编程语言中的一个对象，它事先可以告诉我(或者说我可以通过某个方法了解到)它的结构是怎么样的，有哪些操作方法，然后我再去调用它，这就对编程者提供了一种很灵活的控制能力，也或者说它为实现反射提供了一种支持… </p>
+<h2 id="Python中的自省"><a href="#Python中的自省" class="headerlink" title="Python中的自省"></a>Python中的自省</h2><p>灵活的自省和反射机制也是Python的一个重要的优点之一，编程者可以通过一些内建函数和方法实现对Python虚拟机层面的一些操作，因为默认情况下我们是通过写好的代码来对对象进行操作的，而对于虚拟机来说，代码就是被编译解释的字符串，然而Python虚拟机提供了可以直接通过字符串来操作对象的接口，因而就具备了良好的自省和反射。</p>
+<h3 id="相关的内建函数"><a href="#相关的内建函数" class="headerlink" title="相关的内建函数"></a>相关的内建函数</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Student</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, ID, name, age)</span>:</span></span><br><span class="line">        self.ID = ID</span><br><span class="line">        self.name = name</span><br><span class="line">        self.age = age</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">say</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">print</span> <span class="string">'I am a Student'</span></span><br></pre></td></tr></table></figure>
+<p>这边定义了一个Student类，后面来对它进行自省和反射的操作</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>ss = Student(<span class="number">0</span>,<span class="string">'Li Lei'</span>,<span class="number">20</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>dir(Student)</span><br><span class="line">[<span class="string">'__doc__'</span>, <span class="string">'__init__'</span>, <span class="string">'__module__'</span>, <span class="string">'say'</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>dir(ss)</span><br><span class="line">[<span class="string">'ID'</span>, <span class="string">'__doc__'</span>, <span class="string">'__init__'</span>, <span class="string">'__module__'</span>, <span class="string">'age'</span>, <span class="string">'name'</span>, <span class="string">'say'</span>]</span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>type(ss)</span><br><span class="line">&lt;type <span class="string">'instance'</span>&gt;</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>type(Student)</span><br><span class="line">&lt;type <span class="string">'classobj'</span>&gt;</span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>isinstance(ss,Student)</span><br><span class="line"><span class="keyword">True</span></span><br></pre></td></tr></table></figure>
+<p>这边创建了一个Student的实例，然后我两次分别通过dir()对类和实例进行查看，从输出结果可以看到我收集到了关于这个类和第一个实例的部分属性名，通过type()内建函数也可以看到它们一个是instance类型,一个是classobj类型，通过isinstance()也可以判断一个对象是否是某个类创建的实例</p>
+<p>从上面的dir()看到的属性也只是一部分，还有些是隐藏的，比如__class__和__dict__</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>ss.__class__</span><br><span class="line">&lt;<span class="class"><span class="keyword">class</span> <span class="title">student</span>.<span class="title">Student</span> <span class="title">at</span> 0<span class="title">x7f55ef61b328</span>&gt;</span></span><br><span class="line"><span class="class">&gt;&gt;&gt; <span class="title">type</span><span class="params">(ss.__class__)</span></span></span><br><span class="line"><span class="class">&lt;<span class="title">type</span> '<span class="title">classobj</span>'&gt;</span></span><br><span class="line"><span class="class">&gt;&gt;&gt; <span class="title">ss</span>.<span class="title">__dict__</span></span></span><br><span class="line">&#123;'age': 20, 'ID': 0, 'name': 'Li Lei'&#125;</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>ss.__class__.__dict__</span><br><span class="line">&#123;<span class="string">'__module__'</span>: <span class="string">'student'</span>, <span class="string">'say'</span>: &lt;function say at <span class="number">0x7f55ef625de8</span>&gt;, <span class="string">'__init__'</span>: &lt;function __init__ at <span class="number">0x7f55ef625d70</span>&gt;, <span class="string">'__doc__'</span>: <span class="keyword">None</span>&#125;</span><br></pre></td></tr></table></figure>
+<p>现在可以看出，__class__属性就是该对象的类（classobj)</p>
+<p>实例(instance)和类(classobj)的属性都是通过__dict__这个字典来维护的</p>
+<p>实例（instance)的__dict__里维护了学生的信息，也就是我在__init__()里定义的东西，这些东西在创建实例的时候被加到字典里</p>
+<p>类(classobj)的__dict__维护了相关的方法，__init__和我自己定义的say()</p>
+<p>这也就说明了对象方法的一个调用顺序</p>
+<p>比如我执行ss.say()的时候，是从类(classobj)里找到这个方法，然后解释器再把自己通过self传入去执行</p>
+<p>当然，我也有更奇葩的一种写法：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>ss.__class__.__dict__[<span class="string">'say'</span>]()</span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">"&lt;stdin&gt;"</span>, line <span class="number">1</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">TypeError: say() takes exactly <span class="number">1</span> argument (<span class="number">0</span> given)</span><br></pre></td></tr></table></figure></p>
+<p>这样就报错了，因为我没有将具体的实例(instance)作为参数传入<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>ss.__class__.__dict__[<span class="string">'say'</span>](ss)</span><br><span class="line">I am a Student</span><br></pre></td></tr></table></figure></p>
+<p>现在将ss作为实例传进去，那么就执行成功了，这边的’say’我是通过字符串传入的，也就是完成动态调用的反射了</p>
+<p>然后我要给Student加一个自杀的操作:<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="function"><span class="keyword">def</span> <span class="title">selfkill</span><span class="params">(s)</span>:</span></span><br><span class="line"><span class="meta">... </span>    <span class="keyword">print</span> <span class="string">'I going to kill myself, and my name is %s'</span>%(s.name)</span><br><span class="line"><span class="meta">... </span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>Student.__dict__[<span class="string">'selfkill'</span>]=selfkill</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>ss.selfkill()</span><br><span class="line">I going to kill myself, <span class="keyword">and</span> my name <span class="keyword">is</span> Li Lei</span><br></pre></td></tr></table></figure></p>
+<p>这边我新建了一个函数，打印一行信息，并且取了name这个属性，把它放到Student的字典里</p>
+<p>然后我用ss.selfkill()就可以调用它了，这样就完成了动态添加属性的反射了</p>
+<p>但是没有人会在编程时这么做(如果我的同事这样写代码，我会打死他的)</p>
+<p>通用的做法是这样的:<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>hasattr(ss, <span class="string">'say'</span>)</span><br><span class="line"><span class="keyword">True</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>getattr(ss, <span class="string">'say'</span>)()</span><br><span class="line">I am a Student</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>hasattr(ss, <span class="string">'sing'</span>)</span><br><span class="line"><span class="keyword">False</span></span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="function"><span class="keyword">def</span> <span class="title">wrapper</span><span class="params">(s)</span>:</span></span><br><span class="line"><span class="meta">... </span>    <span class="function"><span class="keyword">def</span> <span class="title">sing</span><span class="params">()</span>:</span></span><br><span class="line"><span class="meta">... </span>        <span class="keyword">print</span> <span class="string">'My name is %s'</span>%(s.name)</span><br><span class="line"><span class="meta">... </span>    <span class="keyword">return</span> sing</span><br><span class="line"><span class="meta">... </span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>setattr(ss, <span class="string">'sing'</span>, wrapper(ss))</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>ss.sing()</span><br><span class="line">My name <span class="keyword">is</span> Li Lei</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>hh = Student(<span class="number">2</span>,<span class="string">"Han MeiMei"</span>,<span class="number">20</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>hasattr(hh,<span class="string">'sing'</span>)</span><br><span class="line"><span class="keyword">False</span></span><br></pre></td></tr></table></figure></p>
+<p>1.通过hasattr(x, attr)函数检查某个对象x是否有某个属性attr</p>
+<p>2.通过getattr(x, attr)来读某个x对象的属性attr，如果是函数方法，就得加上括号和参数了getattr(x,attr)()</p>
+<p>3.在上面的代码中通过包装器wrapper(s)来创建sing()这个方法，包装器在这边的作用就相当与是帮助传入self参数</p>
+<p>4.后面创建的另一个学生韩梅梅(hh)就没有sing()这个方法，因为刚刚的sing()是动态为李雷(ss)这个实例添加的，当然也可以为Student这个类加入一个属性，那么每个新创建的实例都能调用sing()这个方法了，这里也不介绍了</p>
+<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><p>需要区分的几个概念，因为Python虚拟机需要维护一个用来记录用户自定义类(class)的classobject, 因而需要理清从虚拟机到用户代码的这四个层次关系:</p>
+<p>用户类(class)的类型: classobject [虚拟机(typeobject)]</p>
+<p>用户类(class)的类的实例: 一个由classobject创建的实例, Student类 [虚拟机(typeobject)]</p>
+<p>用户类: Student [用户代码]</p>
+<p>用户类的实例: 由Student创建的实例 [用户代码]</p>
+<p>这部分内容可以阅读Python相关源代码的具体实现，看懂部分后就对这个机制有个很明了的理解啦</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2014/12/21/2014/2014-12-21-python-threading-study/" rel="next" title="Python多线程编程学习之基础篇">
+                <i class="fa fa-chevron-left"></i> Python多线程编程学习之基础篇
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2015/03/16/2015/2015-03-16-python-decorator-thread/" rel="prev" title="使用装饰器包装多线程程序">
+                使用装饰器包装多线程程序 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">sizeoftank</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">54</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/sizeoftank" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://weibo.com/lovefar/" target="_blank" title="Weibo">
+                      
+                        <i class="fa fa-fw fa-globe"></i>Weibo</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#WHAT"><span class="nav-number">1.</span> <span class="nav-text">WHAT</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Python中的自省"><span class="nav-number">2.</span> <span class="nav-text">Python中的自省</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#相关的内建函数"><span class="nav-number">2.1.</span> <span class="nav-text">相关的内建函数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#其他"><span class="nav-number">3.</span> <span class="nav-text">其他</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">sizeoftank</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+
+  <script src="https://unpkg.com/mermaid@8.13.2/dist/mermaid.min.js"></script>
+  <script>
+    if (window.mermaid) {
+      mermaid.initialize({"theme":"forest"});
+    }
+  </script>
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("tclzHvBInNDh45LdDgB99dS3-gzGzoHsz", "egATB3l5I1ctiULajrBzgABl");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

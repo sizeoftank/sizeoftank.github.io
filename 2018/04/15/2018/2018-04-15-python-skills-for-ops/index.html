@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="前言Python这门语言应用广泛，不论是大数据，AI，Web开发，运维等领域对Python的应用都有不同的要求，本次分享主要针对Python在运维脚本中的应用介绍一些实战技巧 PEP8 编码规范PEP8 (Python 代码风格指南)，是通过编码风格上的一些要求，用于提高团队中的代码质量，通过规范约束加上静态代码检查(Flake8等)，也可避免一些比较低级的坑。 代码编排主要是终结 tab 跟空格">
+<meta property="og:type" content="article">
+<meta property="og:title" content="写给运维的Python使用技巧">
+<meta property="og:url" content="http://sizeoftank.github.io/2018/04/15/2018/2018-04-15-python-skills-for-ops/index.html">
+<meta property="og:site_name" content="sizeoftank">
+<meta property="og:description" content="前言Python这门语言应用广泛，不论是大数据，AI，Web开发，运维等领域对Python的应用都有不同的要求，本次分享主要针对Python在运维脚本中的应用介绍一些实战技巧 PEP8 编码规范PEP8 (Python 代码风格指南)，是通过编码风格上的一些要求，用于提高团队中的代码质量，通过规范约束加上静态代码检查(Flake8等)，也可避免一些比较低级的坑。 代码编排主要是终结 tab 跟空格">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2021-10-30T08:06:46.897Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="写给运维的Python使用技巧">
+<meta name="twitter:description" content="前言Python这门语言应用广泛，不论是大数据，AI，Web开发，运维等领域对Python的应用都有不同的要求，本次分享主要针对Python在运维脚本中的应用介绍一些实战技巧 PEP8 编码规范PEP8 (Python 代码风格指南)，是通过编码风格上的一些要求，用于提高团队中的代码质量，通过规范约束加上静态代码检查(Flake8等)，也可避免一些比较低级的坑。 代码编排主要是终结 tab 跟空格">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://sizeoftank.github.io/2018/04/15/2018/2018-04-15-python-skills-for-ops/">
+
+
+
+
+
+  <title>写给运维的Python使用技巧 | sizeoftank</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">sizeoftank</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://sizeoftank.github.io/2018/04/15/2018/2018-04-15-python-skills-for-ops/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="sizeoftank">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="sizeoftank">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">写给运维的Python使用技巧</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-15T22:00:00+00:00">
+                2018-04-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Python/" itemprop="url" rel="index">
+                    <span itemprop="name">Python</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/04/15/2018/2018-04-15-python-skills-for-ops/" class="leancloud_visitors" data-flag-title="写给运维的Python使用技巧">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h4 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h4><p>Python这门语言应用广泛，不论是大数据，AI，Web开发，运维等领域对Python的应用都有不同的要求，本次分享主要针对Python在运维脚本中的应用介绍一些实战技巧</p>
+<h4 id="PEP8-编码规范"><a href="#PEP8-编码规范" class="headerlink" title="PEP8 编码规范"></a>PEP8 编码规范</h4><p>PEP8 (Python 代码风格指南)，是通过编码风格上的一些要求，用于提高团队中的代码质量，通过规范约束加上静态代码检查(Flake8等)，也可避免一些比较低级的坑。</p>
+<h4 id="代码编排"><a href="#代码编排" class="headerlink" title="代码编排"></a>代码编排</h4><p>主要是终结 tab 跟空格的争论，PEP8要求全部使用空格，在编辑器中设置 tab 自动替换空格即可 (由于解析器的原因，tab跟空格混用可能会出现解释失败的情况)<br>其他主要影响代码美观性，如空格，空行，注释等等，可参考阅读官方写的示例就好:<br><a href="https://www.python.org/dev/peps/pep-0008/" target="_blank" rel="noopener">https://www.python.org/dev/peps/pep-0008/</a></p>
+<h4 id="变量命名"><a href="#变量命名" class="headerlink" title="变量命名"></a>变量命名</h4><p>主要关注一下变量，方法等的命名方式，如下：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 常量大写</span></span><br><span class="line">USER_CONSTANT = <span class="string">'xxx'</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 类名: 首字母大小</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">UserDetail</span><span class="params">(object)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="comment"># 变量名称, 小写加下划线</span></span><br><span class="line">        self.user_name = <span class="string">'user'</span></span><br><span class="line">        <span class="comment"># 私有属性: 双下划线前缀</span></span><br><span class="line">        self.__encrpyped_password = <span class="string">''</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 函数/方法: 小写加下划线</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">query_roles</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 私有方法: 单下划线前缀</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">_encrypt_password</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">pass</span></span><br></pre></td></tr></table></figure></p>
+<h4 id="代码检查"><a href="#代码检查" class="headerlink" title="代码检查"></a>代码检查</h4><p>Flake8 提供了 PEP8 编码规范及代码静态检查等，可集成到 Sublime Text 等工具中(Python Flake8 Lint 插件)，或者直接在命令行执行 flake8 xxx.py<br>静态检查的好处主要是检查，能够在执行代码前发现一些低级的错误，例如使用未定义方法，未定义的变量等<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">example.py:<span class="number">35</span>:<span class="number">5</span>: F821 undefined name <span class="string">'undefined_method'</span></span><br><span class="line">example.py:<span class="number">36</span>:<span class="number">9</span>: F821 undefined name <span class="string">'undefined_var'</span></span><br></pre></td></tr></table></figure></p>
+<h4 id="字符串处理"><a href="#字符串处理" class="headerlink" title="字符串处理"></a>字符串处理</h4><p>字符串可能是脚本中是最常用到的对象，指导思想就是不要自己写处理逻辑，尽量使用内建方法，正则表达式，模板格式化等方式</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 使用占位符格式化</span></span><br><span class="line"><span class="string">'ps -ef|grep %s'</span> % <span class="string">'java'</span></span><br><span class="line"> </span><br><span class="line"><span class="comment"># 使用字典进行格式化</span></span><br><span class="line"><span class="string">'ps -ef|grep %(keyword)s'</span> % &#123;<span class="string">'keyword'</span>: <span class="string">'java'</span>&#125;</span><br><span class="line"> </span><br><span class="line"><span class="comment"># 使用 format 方法格式化</span></span><br><span class="line"><span class="string">'ps -ef|grep &#123;keyword&#125;'</span>.format(keyword=<span class="string">'java'</span>)</span><br><span class="line"> </span><br><span class="line"><span class="comment"># 对于复杂一些的内容可以通过 Jinja2 来完成，例如生成一段 YML</span></span><br><span class="line">template = jinja2.Template(<span class="string">'\</span></span><br><span class="line"><span class="string">- hosts: &#123;&#123;project.name&#125;&#125;-&#123;&#123;name&#125;&#125;\n\</span></span><br><span class="line"><span class="string">  tasks:\n\</span></span><br><span class="line"><span class="string">    - name: copy captain.jar\n\</span></span><br><span class="line"><span class="string">      copy:\n\</span></span><br><span class="line"><span class="string">        src: /home/ci/captain/captain.jar\n\</span></span><br><span class="line"><span class="string">        dest: &#123;&#123;captain.path&#125;&#125;/\n\</span></span><br><span class="line"><span class="string">    - name: restart captain\n\</span></span><br><span class="line"><span class="string">      shell: bash &#123;&#123;captain.path&#125;&#125;/restart-captain.sh\n\</span></span><br><span class="line"><span class="string">'</span>)</span><br><span class="line"> </span><br><span class="line">yml = template.render(model)</span><br></pre></td></tr></table></figure>
+<p>对于 Jinja2 的使用当然是强烈推荐的，在运维工作中掌握 Jinja2 的使用对于运维自动化的推进非常有帮助的</p>
+<h4 id="序列解析及生成表达式"><a href="#序列解析及生成表达式" class="headerlink" title="序列解析及生成表达式"></a>序列解析及生成表达式</h4><p>这一部分也是 Python 中处理序列数据时非常强大的一些功能，可以简洁优美地完成一些序列数据的变换，也就是通常所说的 Pythonic</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 定义一个生成命令的函数</span></span><br><span class="line">In [<span class="number">7</span>]: <span class="function"><span class="keyword">def</span> <span class="title">ps_cmd</span><span class="params">(x)</span>:</span></span><br><span class="line">   ...:     <span class="keyword">return</span> <span class="string">'ps -ef|grep %s'</span> % (x)</span><br><span class="line">   ...:</span><br><span class="line"></span><br><span class="line">In [<span class="number">8</span>]: datas = [<span class="string">'lc-auth'</span>, <span class="string">'lc-cmdb'</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 对所有元素执行方法并生成列表</span></span><br><span class="line">In [<span class="number">9</span>]: [ps_cmd(x) <span class="keyword">for</span> x <span class="keyword">in</span> datas]</span><br><span class="line">Out[<span class="number">9</span>]: [<span class="string">'ps -ef|grep lc-auth'</span>, <span class="string">'ps -ef|grep lc-cmdb'</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用 map 方法</span></span><br><span class="line">In [<span class="number">10</span>]: map(ps_cmd,datas)</span><br><span class="line">Out[<span class="number">10</span>]: [<span class="string">'ps -ef|grep lc-auth'</span>, <span class="string">'ps -ef|grep lc-cmdb'</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 对于这类序列的处理，还需要掌握 map, filter, reduce 这三个函数</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 也可以使用 lambda 表达式来处理</span></span><br><span class="line">In [<span class="number">11</span>]: map(<span class="keyword">lambda</span> x: <span class="string">'ps -ef|grep %s'</span> % x, datas)</span><br><span class="line">Out[<span class="number">11</span>]: [<span class="string">'ps -ef|grep lc-auth'</span>, <span class="string">'ps -ef|grep lc-cmdb'</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 包含 tuple 的列表处理, 将 tuple 转成字典存储结构</span></span><br><span class="line">In [<span class="number">17</span>]: [&#123;<span class="string">'username'</span>: x, <span class="string">'password'</span>: y&#125; <span class="keyword">for</span> x, y <span class="keyword">in</span> userlist]</span><br><span class="line">Out[<span class="number">17</span>]:</span><br><span class="line">[&#123;<span class="string">'password'</span>: <span class="string">'000000'</span>, <span class="string">'username'</span>: <span class="string">'user'</span>&#125;,</span><br><span class="line"> &#123;<span class="string">'password'</span>: <span class="string">'123456'</span>, <span class="string">'username'</span>: <span class="string">'admin'</span>&#125;,</span><br><span class="line"> &#123;<span class="string">'password'</span>: <span class="string">'123456'</span>, <span class="string">'username'</span>: <span class="string">'ops'</span>&#125;]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 转换成以用户名作为键值的字典</span></span><br><span class="line">In [<span class="number">18</span>]: userdatas = [&#123;<span class="string">'username'</span>: x, <span class="string">'password'</span>: y&#125; <span class="keyword">for</span> x, y <span class="keyword">in</span> userlist]</span><br><span class="line">In [<span class="number">20</span>]: &#123;item[<span class="string">'username'</span>]:item <span class="keyword">for</span> item <span class="keyword">in</span> userdatas&#125;</span><br><span class="line">Out[<span class="number">20</span>]:</span><br><span class="line">&#123;<span class="string">'admin'</span>: &#123;<span class="string">'password'</span>: <span class="string">'123456'</span>, <span class="string">'username'</span>: <span class="string">'admin'</span>&#125;,</span><br><span class="line"> <span class="string">'ops'</span>: &#123;<span class="string">'password'</span>: <span class="string">'123456'</span>, <span class="string">'username'</span>: <span class="string">'ops'</span>&#125;,</span><br><span class="line"> <span class="string">'user'</span>: &#123;<span class="string">'password'</span>: <span class="string">'000000'</span>, <span class="string">'username'</span>: <span class="string">'user'</span>&#125;&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 生成器，可以看到上面的例子中外面都是以 [] 来表达的，这样会直接生成一个列表，但如果改为 () 的话可以创建生成器</span></span><br><span class="line">In [<span class="number">26</span>]: (ps_cmd(x) <span class="keyword">for</span> x <span class="keyword">in</span> datas)</span><br><span class="line">Out[<span class="number">26</span>]: &lt;generator object &lt;genexpr&gt; at <span class="number">0x7f0ef1339be0</span>&gt;</span><br><span class="line"></span><br><span class="line">In [<span class="number">27</span>]: gen = (ps_cmd(x) <span class="keyword">for</span> x <span class="keyword">in</span> datas)</span><br><span class="line"></span><br><span class="line">In [<span class="number">28</span>]: gen</span><br><span class="line">Out[<span class="number">28</span>]: &lt;generator object &lt;genexpr&gt; at <span class="number">0x7f0ef1339c80</span>&gt;</span><br><span class="line"></span><br><span class="line">In [<span class="number">29</span>]: gen.next()</span><br><span class="line">Out[<span class="number">29</span>]: <span class="string">'ps -ef|grep lc-auth'</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 生成器也可以通过 for 语句或者 map, filter, reduce 等方法来遍历</span></span><br><span class="line"><span class="comment"># 生成器与列表的区别主要是列表在创建时需要分配内存，而生成器不需要，用来减少内存开销，这一特性通过 yield 关键字来实现</span></span><br><span class="line"><span class="comment"># 上面创建生成器的语句 (ps_cmd(x) for x in datas) 等价于</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">31</span>]: <span class="function"><span class="keyword">def</span> <span class="title">gen</span><span class="params">(datas)</span>:</span></span><br><span class="line">   ....:     <span class="keyword">for</span> x <span class="keyword">in</span> datas:</span><br><span class="line">   ....:         <span class="keyword">yield</span> ps_cmd(x)</span><br><span class="line">   ....:</span><br></pre></td></tr></table></figure>
+<h4 id="错误处理"><a href="#错误处理" class="headerlink" title="错误处理"></a>错误处理</h4><p>使用 traceback 追踪错误, 例如打印调用栈<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> traceback</span><br><span class="line"></span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    do something</span><br><span class="line"><span class="keyword">except</span> Exception <span class="keyword">as</span> ex:</span><br><span class="line">    <span class="keyword">print</span> ex</span><br><span class="line">    traceback.print_exc()</span><br></pre></td></tr></table></figure></p>
+<p>了解标准库中异常的层级结构，知道异常的一些分类方法，合理地进行错误处理使程序更健壮<br><a href="https://docs.python.org/2.7/library/exceptions.html#exception-hierarchy" target="_blank" rel="noopener">https://docs.python.org/2.7/library/exceptions.html#exception-hierarchy</a><br>简化列举一下<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Exception</span><br><span class="line">  StandardError</span><br><span class="line">  	IOError (I/O 包括文件系统，网络等)</span><br><span class="line">  	OSError (系统相关)</span><br><span class="line">  	LookupError (访问数组/字典)</span><br><span class="line">  	TypeError (方法接收了不合法的类型等)</span><br><span class="line">  	ValueError (编解码相关)</span><br></pre></td></tr></table></figure></p>
+<p>特殊的场景中也需要自定义异常，需要注意在自定义异常时也需要合理地定义异常的层级及父异常</p>
+<h4 id="静态方法和类方法"><a href="#静态方法和类方法" class="headerlink" title="静态方法和类方法"></a>静态方法和类方法</h4><p>静态方法和类方法的使用，静态方法的定义通过 staticmethod 装饰器，类方法通过 classmethod 装饰器</p>
+<p>常见的一种用法是定义一个工具类, 将一系列的方法归类，和直接使用函数的差别主要是在这些方法有了一个类的命名空间，管理起来不那么混乱<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">AESUtils</span><span class="params">(object)</span>:</span></span><br><span class="line"><span class="meta">    @staticmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">encrypt</span><span class="params">(text)</span>:</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="meta">    @staticmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">decrypt</span><span class="params">(text)</span>:</span></span><br><span class="line">        <span class="keyword">pass</span></span><br></pre></td></tr></table></figure></p>
+<p>另外一种场景就是用于设置和该类相关的一些全局配置，环境变量等操作<br>类方法的使用和静态方法基本类似，区别在于接受的第一个参数是类的class对象</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Query</span><span class="params">(object)</span>:</span></span><br><span class="line">    DEFAULT_LIMIT = <span class="number">100</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, offset, limit, keyword)</span>:</span></span><br><span class="line">        self.offset = <span class="number">0</span></span><br><span class="line">        self.limit = <span class="number">0</span></span><br><span class="line">        self.keyword = keyword</span><br><span class="line"></span><br><span class="line"><span class="meta">    @classmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">limit</span><span class="params">(cls, limit)</span>:</span></span><br><span class="line">        <span class="comment"># 改变类的全局选项</span></span><br><span class="line">        cls.DEFAULT_LIMIT = limit</span><br><span class="line"></span><br><span class="line"><span class="meta">    @classmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">from_keyword</span><span class="params">(cls, keyword)</span>:</span></span><br><span class="line">        <span class="comment"># 通过 cls 参数来创建一个查询对象</span></span><br><span class="line">        <span class="keyword">return</span> cls(<span class="number">0</span>, DEFAULT_LIMIT, keyword)</span><br><span class="line"></span><br><span class="line">query = Query.from_keyword(<span class="string">'test'</span>)</span><br></pre></td></tr></table></figure>
+<h4 id="使用抽象类及接口"><a href="#使用抽象类及接口" class="headerlink" title="使用抽象类及接口"></a>使用抽象类及接口</h4><p>使用 abc 库定义抽象类，可以在Python实例化类的时候检查类是否实现了某些方法，这样可以在一定程度上避免运行时调用接口导致 AttributeError 异常<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">AbstractProcess</span><span class="params">(object)</span>:</span></span><br><span class="line">    __metaclass__ = abc.ABCMeta</span><br><span class="line">    </span><br><span class="line"><span class="meta">    @abc.abstractmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">start</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="string">'start a process'</span></span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">NotImplemented</span></span><br><span class="line"> </span><br><span class="line"><span class="meta">    @abc.abstractmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">stop</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="string">'stop a process'</span></span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">NotImplemented</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SpringbootProcess</span><span class="params">(AbstractProcess)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, name)</span>:</span></span><br><span class="line">        self.name = name</span><br><span class="line"></span><br><span class="line"><span class="comment"># 这样就对 AbstractProcess 的子类进行了约束, 没有实现 start, stop 方法的类不能被实例化</span></span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">"example.py"</span>, line <span class="number">97</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">    proc = SpringbootProcess(<span class="string">'xxx'</span>)</span><br><span class="line">TypeError: Can<span class="string">'t instantiate abstract class SpringbootProcess with abstract methods start, stop</span></span><br></pre></td></tr></table></figure></p>
+<h4 id="Mixin模式"><a href="#Mixin模式" class="headerlink" title="Mixin模式"></a>Mixin模式</h4><p>Python中的类可以多重继承，但在面向对象原则上在继承的使用上必须保持单一继承关系，也就是一个类只能继承一个父类。<br>类比其他编程语言中的类可以实现多个接口，Python中的多重继承可以通过Mixin模式为类添加多种功能。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 序列化并且通过Redis读取</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">RedisMixin</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">redis_key</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">raise</span> <span class="built_in">NotImplemented</span></span><br><span class="line"></span><br><span class="line"><span class="meta">    @classmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">from_redis</span><span class="params">(cls, key)</span>:</span></span><br><span class="line">        r = redis.Redis(host=<span class="string">'192.168.100.101'</span>, port=<span class="number">6379</span>)</span><br><span class="line">        data = r.get(key)</span><br><span class="line">        <span class="keyword">return</span> pickle.loads(data)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">to_redis</span><span class="params">(self)</span>:</span></span><br><span class="line">        r = redis.Redis(host=<span class="string">'192.168.100.101'</span>, port=<span class="number">6379</span>)</span><br><span class="line">        data = pickle.dumps(self)</span><br><span class="line">        r.set(self.redis_key, data)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建用户类, 并提供序列化到Redis的功能</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">User</span><span class="params">(RedisMixin)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, name, email)</span>:</span></span><br><span class="line">        self.name = name</span><br><span class="line">        self.email = email</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">redis_key</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> <span class="string">'username:%s'</span> % (self.name)</span><br><span class="line"></span><br><span class="line">user = User(<span class="string">'user'</span>, <span class="string">'user@xiaopeng.com'</span>)</span><br><span class="line">print(user.to_redis())</span><br><span class="line"></span><br><span class="line">user = User.from_redis(<span class="string">'username:user'</span>)</span><br><span class="line">print(user.name, user.email)</span><br></pre></td></tr></table></figure></p>
+<h4 id="装饰器"><a href="#装饰器" class="headerlink" title="装饰器"></a>装饰器</h4><p>装饰器的应用主要在一些开发框架中，例如 Web 框架中的路由<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Application</span><span class="params">(object)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></span><br><span class="line">        self.router_mapper = &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 这里定义装饰器, 将URI注册到对象中</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">route</span><span class="params">(self, path)</span>:</span></span><br><span class="line">        <span class="function"><span class="keyword">def</span> <span class="title">decorator</span><span class="params">(callfunc)</span>:</span></span><br><span class="line">            self.router_mapper[path] = callfunc</span><br><span class="line">            <span class="keyword">return</span> callfunc</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> decorator</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">dispatch</span><span class="params">(self, uri, kwargs=&#123;&#125;)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> self.router_mapper[uri](**kwargs)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    app = Application()</span><br><span class="line"></span><br><span class="line"><span class="meta">    @app.route('/hello')</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">hello</span><span class="params">()</span>:</span></span><br><span class="line">        <span class="keyword">return</span> <span class="string">'hello'</span></span><br><span class="line"></span><br><span class="line"><span class="meta">    @app.route('/echo')</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">echo</span><span class="params">(message)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> <span class="string">'echo %s'</span> % (message)</span><br><span class="line"></span><br><span class="line">    print(app.dispatch(<span class="string">'/hello'</span>))</span><br><span class="line">    print(app.dispatch(<span class="string">'/echo'</span>, &#123;<span class="string">'message'</span>: <span class="string">'test'</span>&#125;))</span><br></pre></td></tr></table></figure></p>
+<p>大家也可以拓宽思路, 将装饰器其使用在脚本里或者开发一些公共的运维模块</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2015/04/03/2015/2015-04-03-redis-study/" rel="next" title="Redis学习笔记">
+                <i class="fa fa-chevron-left"></i> Redis学习笔记
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/07/25/2020/2020-7-26-fuck-brew-git/" rel="prev" title="Homebrew更换git源">
+                Homebrew更换git源 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">sizeoftank</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">54</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/sizeoftank" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://weibo.com/lovefar/" target="_blank" title="Weibo">
+                      
+                        <i class="fa fa-fw fa-globe"></i>Weibo</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#PEP8-编码规范"><span class="nav-number">2.</span> <span class="nav-text">PEP8 编码规范</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#代码编排"><span class="nav-number">3.</span> <span class="nav-text">代码编排</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#变量命名"><span class="nav-number">4.</span> <span class="nav-text">变量命名</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#代码检查"><span class="nav-number">5.</span> <span class="nav-text">代码检查</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#字符串处理"><span class="nav-number">6.</span> <span class="nav-text">字符串处理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#序列解析及生成表达式"><span class="nav-number">7.</span> <span class="nav-text">序列解析及生成表达式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#错误处理"><span class="nav-number">8.</span> <span class="nav-text">错误处理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#静态方法和类方法"><span class="nav-number">9.</span> <span class="nav-text">静态方法和类方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#使用抽象类及接口"><span class="nav-number">10.</span> <span class="nav-text">使用抽象类及接口</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Mixin模式"><span class="nav-number">11.</span> <span class="nav-text">Mixin模式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#装饰器"><span class="nav-number">12.</span> <span class="nav-text">装饰器</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">sizeoftank</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+
+  <script src="https://unpkg.com/mermaid@8.13.2/dist/mermaid.min.js"></script>
+  <script>
+    if (window.mermaid) {
+      mermaid.initialize({"theme":"forest"});
+    }
+  </script>
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("tclzHvBInNDh45LdDgB99dS3-gzGzoHsz", "egATB3l5I1ctiULajrBzgABl");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
